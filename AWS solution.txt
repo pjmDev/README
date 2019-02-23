@@ -6,14 +6,11 @@ AWS EC2
 가입일자 2019.02.01
 AMI 아마존 리눅스 2 선택
 나머지는 기본으로 설정
-키이름은 JMprivate.pem 으로 사용
-
-고정 IP v4 : 52.78.22.164
-퍼블릭 DNS : ec2-52-78-22-164.ap-northeast-2.compute.amazonaws.com
+키이름은 자신이 정한대로 .pem 으로 사용
 
 ////////////////////////////////////////// SSH 연결
 세션 로그인
-ec2-user@13.125.217.221
+ec2-user@ipv4
 
 암호는 개인키를 받았기 때문에 PuttyGen을 이용
 Pem파일을 사용하여 PPK파일 만들기
@@ -37,7 +34,6 @@ sudo yum clean all
 sudo yum update
 
 ----------------------------------------
-마리아DB
 FTP
 JSP톰캣설치 등등
 
@@ -58,7 +54,7 @@ sudo su new_user
 new_user <- 
 
 키입력형식 :  
-ssh-rsa 퍼블릭키 Leeprivate
+ssh-rsa 퍼블릭키 *(pem파일이름만)
 
 한줄로써 입력이 되어야함
 PUTTYgen으로 ppk파일을 키페어에 가져오기 하여 퍼블릭키구간만 복사를 하여 위에 퍼블릭키 구간에
@@ -85,7 +81,10 @@ cat >> .ssh/authorized.keys
 sudo usermod -a -G ec2-user lee
 // ec2-user 그룹에 대한 권한 줘야함.
 
-
+모든 FTP, SSH연결은 키를 사용하여 로그인
+AMI에서 보안그룹에서 내IP 항상 사용 (22포트)
+키를 가지지 않고 id/pw 를 가진 아이디를 생성하여 로그인하면
+기능사용 불가
 ---------------------------------
 Git 설치 및 Clone
 소스트리 설치 (git에 clone 해줄 프로그램 BitButket) 
@@ -107,5 +106,6 @@ sudo mkdir /home/디렉토리이름/git
 -> 이유는 1분전이라도 수정된 사항을 가지고 코드를 수정후 또다시 1초전의
      수정된 사항을 반영하여 git에 업로드 하기 위함.
 
-
+--------------------------
+고정IP -> AMI에서 받아서 사용가능
 
