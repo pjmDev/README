@@ -1,0 +1,150 @@
+﻿<JSP 시작하기>
+
+
+
+
+-------------------리눅스 톰캣------------------------
+	
+1. 톰캣8 다운로드 받기 (apache-tomcat-8.5.9.tar.gz)
+https://tomcat.apache.org/download-80.cgi에들어가서 tar.gz 다운(Core메뉴에)
+
+
+2. JDK1.8 다운로드 받기 (jdk-8u111-linux-x64.tar.gz)
+http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html 에 들어가서 Linux x64 다운
+
+
+3. JDK1.8 설정
+
+서버에서 디렉터리 생성 mkdir /usr/java
+
+tar파일 권한변경 chown -R root.root jdk-8u111-linux-x64.tar.gz
+
+tar 파일이동 mv jdk-8u111-linux-x64.tar.gz /usr/java
+
+java파일로 이동한다.  cd /usr/java
+
+tar파일의 압출을 푼다. tar -zxvf jdk-8u111-linux-x64.tar.gz
+
+링크삭제 rm -rf /etc/alternatives/java
+
+링크 생성
+ln -s /usr/java/jdk1.8.0_121/bin/java /etc/alternatives/java
+ln -s /usr/java/jdk1.8.0_121 latest
+ln -s /usr/java/latest default
+
+환경설정
+vi /etc/profile
+​
+(복붙)
+export JAVA_HOME=/usr/java/default
+export PATH=$PATH:$JAVA_HOME/bin
+export CLASSPATH=$JAVA_HOME/jre/lib:$JAVA_HOME/lib/tools.jar
+
+오류확인
+source /etc/profile
+
+4. Tomcat8 설정
+
+권한변경
+chown -R root.root apache-tomcat-8.5.9.tar.gz /usr
+
+파일이동
+mv apache-tomcat-8.5.9.tar.gz /usr
+
+압출풀기
+tar -zxvf apache-tomcat-8.5.9.tar.gz
+
+이름변경
+mv apache-tomcat-8.5.9 tomcat8
+
+카타리나 환경설정
+vi tomcat/bin/catalina.sh
+
+(복붙)
+export JAVA_HOME=/경로 입력
+export CATALINA_HOME=/usr/tomcat8
+export TOMCAT_HOME=/usr/tomcat8
+export CATALINA_BASE=/usr/tomcat8
+CATALINA_PID=/usr/tomcat8/bin/tomcat.pid
+
+
+server.xml 설정
+vi tomcat/conf/server.xml
+
+<!-- 서버포트 -->
+<Server port="18005" shutdown="SHUTDOWN">
+
+<!-- 연결포트 -->
+<Connector port="80" protocol="HTTP/1.1"
+           connectionTimeout="20000"
+           redirectPort="443" URIEncoding="UTF-8" UseBodyEncodingForURL="true" />
+연결 포트에는 excutor="tomcatThreadPool"을 추가 해야할수도 있음.
+
+<!--  SSL 사용할 경우만 -->
+<Connector port="443" protocol="HTTP/1.1" SSLEnabled="true"
+           maxThread="150" scheme="https" secure="true"
+           keystoreFile="/usr/ssl/test_or_kr.pfx" keystorePass="12345" keystoreType="PKCS12"
+           clientAuth="false" sslProtocol="TLS" />
+
+<!-- AJP포트 -->
+<!-- Define an AJP 1.3 Connector on port 8009 -->
+<Connector port="18009" protocol="AJP/1.3" redirectPort="443" />
+
+<!--  tomcat8 홈디렉터리 잡아주기 -->
+<Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true">
+    <context path="" docBase="user" reloadable="true" />
+</Host>
+​
+설명 : appBase=""의 "" 안에는 /home/ranayo 같은 디렉터리 주소를 넣어준다.
+         docBase=""의 "" 안에는 index.jsp 같은 기본 베이스파일 이름을 넣는다.
+
+
+5. Tomcat8 실행
+서비스 종료
+/usr/tomcat8/bin/shutdown.sh
+
+서비스 시작
+/usr/tomcat8/bin/startup.sh
+
+
+--------------------------------------------------------------
+jsp mysql 연동
+
+jsp에서 db를 연동시키기 위해서는 jar파일이 필요한데 
+
+http://dev.mysql.com/downloads/connector/j/5.1.html에 들어가
+
+mysql-connect tar.gz파일을 다운을 받고
+
+리눅스에서 압축을 풀어 
+tar xzpf mysql-connector-java-5.0.7.tar.gz
+
+jar파일을 java/jdk/jre/lib/ext/에 파일을 이동시킨다.
+
+이동시킨 다음 tomcat8을 재시작한다.
+tomcat8/bin/ 폴더 안의 
+./shutdown.sh
+./startup.sh
+
+그리고 jsp에서 mysql을 연결을 할 때 import문이 필요하다.
+<%@page import="javax.sql.*"%>
+<%@page import="javax.naming.*"%>
+<%@page import="java.sql.*"%>
+
+3개가 있어야 Connection, Statement, ResultSet 형식이 초기화가 된다.
+
+--------------------------------------------------------------
+jsp에 대해서 기능에대한 설명이 자세하게 되어있는 블로그
+참고하면 좋다.
+http://blog.naver.com/jihoon8912/220263391104
+
+
+--------------------------------------------------------------
+
+기본 루트는 tomcat8 폴더 안의 webapps/ROOT/index.jsp 이다.
+
+
+--------------------------------------------------------------
+
+
+

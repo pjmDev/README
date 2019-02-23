@@ -1,0 +1,61 @@
+2.  PDO 기본 사용법
+객체 생성 : try catch 문에서 생성합니다.
+try{
+    // MySQL PDO 객체 생성
+    // mysql을 다른 DB로 변경하면 다른 DB도 사용 가능
+    $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+    // 에러 출력
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+// 에러 출력하지 않음
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+// Warning만 출력
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+// 에러 출력
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+}
+catch(Exception $e) {
+    echo$e->getMessage();
+}
+
+
+커넥션 닫기 : $pdo = null;
+
+SQL 실행
+$st = $pdo->prepare('INSERT INTO table (col1) VALUE (`val1`)');
+$st->execute();
+
+ SQL 인젝션을 방지하기 위해 prepare와 placeholder를 사용합니다
+// placeholder 없음. SQL 인젝션의 위험이 있음.
+$st = $pdo->("INSERT INTO table (col1, col2, col3) values ($val1, $val2, $val3)");
+ 
+// 이름 없는 placeholder. SQL 인젝션 방지.
+$st = $pdo->('INSERT INTO table (col1, col2, col3) values (?, ?, ?)');
+// 값을 넘겨주고 실행
+$st->execute(['val1', 'val2', 'val2']);
+  
+// 이름 있는 placeholder. SQL 인젝션 방지
+$st = $pdo->("INSERT INTO table (col1, col2, col3) value (:col1, :col2, :col3)");
+// 값을 넘겨주고 실행
+$st->execute([':col1'=>'val1', ':col2'=>'val2', ':col3'=>'val3']);
+
+
+
+
+여기선 배열로 가져오는 방법만 소개하겠습니다.
+// SELECT
+$st = $pdo->('SELECT * FROM table');
+$st->execute();
+ 
+// Fetch 모드를 설정
+$st->setFetchMode(PDO::FETCH_ASSOC);
+ 
+// 1 row 씩 가져오기
+while($row= $st->fetch()) {
+    echo$row['col1'].'<br/>';
+    echo$row['col2'].'<br/>';
+    echo$row['col3'].'<br/>';
+}
+
+

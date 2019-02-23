@@ -1,0 +1,181 @@
+ 네트워크 연결
+--------------------------------------
+  #ip addr 을 입력후  enp0s25 <- 인지 다른 것인지 확인
+
+  #vi /etc/sysconfig/network-scripts/ifcfg-enp0s25 
+(enp0s25는 ip addr 에서 enp0s2인지 확인해야함)
+
+HWADDR= 물리주소
+IPADDR= 아이피
+NETMASK= 마스크
+GATEWAY= 게이트웨이
+DNS1= 도메인
+
+추가 및 입력 후 저장 (:w)
+
+#systemctl restart network
+
+
+--------------------------------------
+ FTP연결
+--------------------------------------
+ 1. yum install vsftpd
+ 2. systemctl start vsftpd (vsftpd 실행)
+ 
+ groupadd staff //그룹생성
+
+ useradd -gstaff -d/home/pjm pjm //그룹안에 유저아이디 생성
+ //스태프 그룹에 pjm이라는 유저계정 생성
+ passwd pjm // 유저계정 비밀번호 설정
+
+ /home 폴더에 jjjj 라는 폴더를 만들었을 경우에
+ chown -r pjm:staff jjjj/
+
+ 해주면 권한이 설정이 된다.
+ 
+--------------------------------------
+ 마리아db 설치
+--------------------------------------
+ 1. #yum install mariadb mariadb-server
+
+ 2. #systemctl start mariadb
+
+//mySQL 연결을 위해 루트아이디 패스워드 생성
+ 
+ mysqladmin -uroot password 비밀번호
+
+ mysql -uroot -p비밀번호
+// 그럼 mysql로 연결이 됨. 근데 만약 mySQL이 윈도우에서 연결이 안될 시
+
+ mysql -uroot -p비밀번호 //mysql연결 시
+
+ grant all privileges on *.* to 'root'@'%' identified by '비밀번호';
+
+//그리고 systemctl restart mariadb 해준후 재연결
+
+데몬이 안뜰댄 pid파일이 없어서 안뜨는게 유력하다
+
+혹시 DB를 remove하고 다시 install할 경우
+
+etc 에있는 my.* 나 my.conf안에 있는 경로에 있는 모든 폴더를
+
+삭제한 후에 yum install mariadb를 하여야 재설치가 완료가 된다.
+
+--------------------------------------
+ httpd 아파치 설치
+--------------------------------------
+컴파일로 설치를 하기 위해서 아파치홈페이지에서 아파치(자신이 원하는 버전의) .gz파일 다운
+
+FTP 서버에 올리기 (예를들어 work라는 폴더 하나를 만들어서 그안에 gz파일 복사해서 붙이기)
+
+gzip -d *.gz  //알집풀기
+tar xvf *.tar //tar실행
+
+그다음 인터넷에서 ./config ***** 길게 적힌 걸 찾아야됩니다
+(아파치 컴파일 설치 이렇게 치면 나옵니다)
+
+tar실행 한후에 ./config문을 실행을 한 뒤에
+
+할때 중간에 오류가 뜹니다. (라이브러리 파일 없다고)
+
+yum install libxml2
+yum install libxml2-devel
+
+// configure 도중에 error 중에 mscpt인가 비슷한게 있는데
+// 이부분은 yum install 을 할려면
+// yum install epel-release 를 설치를 한 후에
+// yum install libms... 과 yum install libmc...-devel 을 설치 할수있다.
+
+config문이 다되면
+
+#make 
+#make install
+
+install을 다한다면 httpd폴더를 chmod 755를 해줍니다.
+
+완료가 되었다면 실행을 시켜주어야 하는데 systemctl이 안되기 때문에
+apache폴더에 찾아 들어가서 (내가 컴파일 했을때 경로는 /usr/local/apache/bin 경로)
+apachectl 이 있는데 ./apachectl start 를 해주면 실행이 된다
+
+http://faq.hostway.co.kr/Linux_WEB/5716
+http://joont.tistory.com/46 
+(vhost설정은 위에 두 사이트를 참고하시면 됩니다.)
+
+--------------------------------------
+ php 설치
+--------------------------------------
+컴파일로 설치를 하기 위해서 아파치홈페이지에서 아파치(자신이 원하는 버전의) .gz파일 다운
+
+FTP 서버에 올리기 (예를들어 work라는 폴더 하나를 만들어서 그안에 gz파일 복사해서 붙이기)
+
+gzip -d *.gz  //알집풀기
+tar xvf *.tar //tar실행
+
+tar실행 한후에 ./config문을 실행을 한 뒤에
+
+할때 중간에 오류가 뜹니다. (라이브러리 파일 없다고)
+
+
+// configure 도중에 error 중에 mscpt인가 비슷한게 있는데
+// 이부분은 yum install 을 할려면
+// yum install epel-release 를 설치를 한 후에
+// yum install libms... 과 yum install libmc...-devel 을 설치 할수있다.
+
+./config 컴파일이 다되면
+
+#make 
+#make install
+
+install을 다한다면 php폴더를 찾아가 chmod 755를 해줍니다.
+
+------------------------------------
+(아파치와 php를 다 컴파일 한 후에 httpd.conf에 기본경로를 불수있다.
+
+설치를 완료를 하였는데 
+
+*.php 파일이 먹히지 않는다면
+
+다운받은 apache폴더에 들어가 conf 폴더로 들어가면 ( apache/conf )
+안에 httpd.conf 가 있다.
+
+vi httpd.conf 를 하여서
+
+AddType을 찾아서
+
+AddType application/x-httpd-php .php .php3. php4. php5 .phtml .html .htm .inc 
+AddType application/x-httpd-php-source .phps 
+AddHandler application/x-httpd-php .phps
+위에처럼 수정을 해주면 php를 인식을 하게 된다.
+
+php.ini 파일 위치 = /work/php-7.0.9/ <- 이루트에 있음
+
+아파치 내용 변경후에는 항상
+apachectl 을 restart
+
+
+------------------------------------
+ps -ef | grep vsftpd (vsftp 데몬이 실행되어있는지 화인가능)
+rm 파일명 (파일삭제)
+mv 파일명 /work (이파일을 work폴더로 이동)
+alias l='ls -al' (l을 ls -al와 동일하게 작동하도록 설정)
+
+ - 서버를 재부팅시
+systemctl start vsftpd
+systemctl start mariadb
+./apachectl start (/usr/local/apache/bin)
+./startup.sh (/usr/tomcat8/bin)
+
+
+ - 서버에서 톰캣, 아파치 프로세스가 돌아가는데 홈페이지 접속에 문제가 생겼을 경우
+
+포트 바인딩문제인 경우
+firewall -cmd --zone=public --add-port=80/tcp --permanent 
+윗 명령어로 바인딩시키고 -> 포트번호( 21(ftp), 22(SSH), 443(https), 80(http) )
+
+firewall -cmd --rerolad 
+방화벽 재시작
+
+ - 날자시간
+  ln -sf /usr/share/zoneinfo/Aisa/Seoul /etc/localtime
+
+

@@ -1,0 +1,103 @@
+sts4 (스프링 부트)
+(web, mustache, jpa, Devtools)
+ec2
+mysql
+java 1.8.0 201
+SoruceTree
+gitHub
+
+기본 아키텍처
+
+//스프링레퍼런스 https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+//https://docs.spring.io/spring-boot/docs/current/reference/html/ > 러퍼런스 전체 목록
+스프링 시작----------------------------------------------------------------------------------
+sts4 실행
+
+ctl+N 눌러 Wizards에 Spring입력 그후 밑에 spring start project 를 클릭
+
+NAME : ranayo
+Type : Gradle(buildship3.x)
+Group : net.ranayo
+Artifact : ranayo
+Version : 1.0
+Description : ranayo web server
+Package : net
+
+작성후 NEXT
+
+Spring Boot version 2.1.3
+
+Available
+Web -> 웹을 이용
+mustache -> 웹에 자바코드를 보여주기위한 장치
+jpa -> DB연결 방법
+Mysql -> DB형식을 위해 삽입
+DevTools -> localhost 작업을 위한 도움을 주는 툴
+
+처음 빌드를 하면 오류가날것이다.
+(아래에 있는 글중 아래글 추가 내용에 아래 오류에 대한 부분이 다 추가되어있는 속성들이다.)
+KST에 대한 오류가 뜬다. Gradle버전은 KST가 되지 않아서 
+spring.datasource.url=jdbc:mysql://220.69.247.5:3306/wranayo?serverTimezone=Asia/Seoul
+serverTimezone을 Asia/Seoul 이나 UCT로 바꾸면 처음 jdbc연결 오류는 해결이 된다.
+
+ Error creating bean with name 'org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration': Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataSource' defined in br.com.alura.listavip.Configuracao: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [javax.sql.DataSource]: Factory method 'dataSource' threw exception; nested exception is java.lang.IllegalStateException: Could not load JDBC driver class [com.mysql.jdbc.Drive]
+위 해당 오류는 application.properties에 datasource를 지정을 안해주어서 오류가 난 것이다. (빈 생성오류)
+
+생성을 한 후에 빌드를 하면 오류가 뜨는데
+spring.datasource.hikari.maximum-pool-size=2 <- 이부분이 없어서 오류가 뜨는 것이다.
+
+entitymanagerfactory' defined in class path resource 오류가 뜨는데
+
+application.properties 에 아래 글을 추가해준다.
+spring.datasource.url=jdbc:mysql://220.69.247.5:3306/wranayo?serverTimezone=Asia/Seoul
+spring.datasource.username=root
+spring.datasource.password=1q2w3e4r!
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+spring.datasource.hikari.maximum-pool-size=2 <-- 필수 부분. 이거 없으면 안됨
+spring.jpa.database-platform = org.hibernate.dialect.MySQL5Dialect
+spring.jpa.generate-ddl=true 
+spring.jpa.hibernate.ddl-auto = update   
+//update가 아닌 create면 서버 재실행때마다 DB가 초기화댐
+//프로젝트 제일 처음 시작시엔 create로 하여서 빌드를 한 후에 update로 수정을 한다.
+
+build.gradle에는
+dependencies안에 아래 주석을 제외한 내용과 동일 하면 된다.
+주석이 되어 있는 부분은 주석이 없애고 빌드를 하면 진행된다.
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-mustache'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'mysql:mysql-connector-java'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	//implementation fileTree(dir: 'libs', include: ['*.jar'])
+	//implementation 'mysql:mysql-connector-java'
+	//implementation 'org.hibernate:hibernate-core'
+	//implementation 'org.hibernate:hibernate-entitymanager'
+	//implementation 'javax.xml.bind:jaxb-api'
+}
+
+application.properties와 build.gradle에 대해 수정이 끝난후 빌드를 하면
+DevTools의 도움을 받아
+localhost:8080 으로 접속을 하면 접속이 된다.
+
+-------------------------------------------------------------------------
+@Controller 
+controller에서 return으로 Mapping을 해줄때
+mustache를 사용하는 경우
+
+application.properties에
+spring.mustache.suffix: .html
+spring.mustache.prefix=classpath:/templates/ 
+->(default로 templates에 참조하게 되어있다.)
+를 추가해주어야 
+컨트롤러에서 return할 때 경로에서 src/main/resources/templates에서
+html을 읽어올수 있다.
+
+URI > GetMapping("url") ,  GetMapping("/url/{id}")
+{id} <- id는 REQUEST의 이름이고 {변수이름}으로 넘어온 변수를 사용가능
+
+---------------------------------------------------------------------------
+자바코드에
+model.addAttribute("name","Park");
+속성이름 name으로 Park으로 지정해주고 html에서 받아서 사용 가능하다.

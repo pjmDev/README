@@ -1,0 +1,52 @@
+﻿--------------------2017.10.18--------------------
+
+라즈비안 초기 ID : pi Password : raspberry
+
+라즈비안 초기설정
+
+sudo raspi-config 실행
+
+1. Expand Filesystem : SD 카드의 전체용량을 사용할 수 있게 합니다. 
+2. Change User Password : ‘pi’ 계정의 비밀번호를 변경합니다. 
+3. Enable Boot to Desktop/Scratch : 부팅시 명령어 환경이 아닌 GUI Windows 환경으로 시작됩니다. 
+4. Internationalisation Options : 언어, 키보드, Timezone 등을 설정합니다. 
+5. Enable Camera : Raspberry Pi 전용 카메라를 사용할수 있도록 합니다. 
+6. Add to Rastrack : rastrack 서버에 사용중인 Raspberry Pi를 등록합니다. 전 세계적으로 서버에 등록된 Raspberry Pi의 현황을 파악할 수 있습니다. 
+7. Over Clock : 700MHz 이상의 CPU Clock 으로 변경할 수 있습니다. 
+8. Advanced Options : Hostname 변경, SSH on/off, SPI on/off, Audio HDMI/3.5mm jack 등을 설정합니다. 
+
+
+1. SD카드를 사용을 하게 되면 2G밖에 설정이 안되있다. (초기상태엔 2G가 최대)
+
+   그렇기 때문에 1번 Expand Filesystem 를 실행하여 전체를 사용할 수 있도록 만들어줍니다.
+
+2. 선택사항 (Change User password) pi 계정의 비밀번호 설정
+
+3. locale과 keyboard 설정
+   
+   locale -> en_GB.UTF-8 UTF-8, en_US.UTF-8 UTF-8, ko_kr.UTF-8 UTF-8  선택
+
+   keyboard -> Generic 105 key (Intl) PC 를 선택하자
+
+   * Tip : Slim 키보드 또는 파이 랩독 사용유저는 Generic 102 key (Intl) PC 를 선택하자.
+
+   선택 후 Other를 선택하여 Korean을 찾는다.
+
+   Korean 아래 Korean – Korean (101/104 key compatibale)을 선택하자
+
+   그다음 The default for the keyboard layout 을 선택하자
+
+   No compose key 를 선택하자
+
+   X-windows에서 단축키를 이용하여 terminal을 실행여부를 묻는 화면이다 저는  “no” 를 선택하자.
+   
+   X-window에서 2벌씩 입력기를 사용을 하기 위해서는 ibus를 설치를 하면된다.
+
+   (sudo apt-get install ibus ibus-hangul)
+    
+   
+   다한뒤 라즈베리파이를 재실행을 하면 2G가 아닌 SD용량만큼 사용할 수 있다.
+
+   재실행을 하여 
+   
+   sudo apt-get update, sudo apt-get upgrade 를 해준다 (패키지 및 모듈업그래이드)

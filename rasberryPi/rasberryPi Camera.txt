@@ -1,0 +1,56 @@
+http://www.rasplay.org/?p=5586
+파이카메라(기본동작)
+
+http://programmerchoo.tistory.com/87
+gStreamer
+
+http://webnautes.tistory.com/956
+openCV
+
+https://m.blog.naver.com/PostView.nhn?blogId=scw0531&logNo=220653503111&proxyReferer=https%3A%2F%2Fwww.google.co.kr%2F
+motion library(이걸로 선정)
+
+http://www.rasplay.org/?p=7174
+mjpg
+
+
+sudo raspi-config 에서 카메라 enable 시켜주면됨.
+
+imagemagick 설치(사진 변환)
+sudo apt-get install imagemagick
+
+
+파이카메라 동작 시스템명령어
+
+ raspistill -o caputure.jpg -t 1000 (1초당 1번) -n 을 붙이면 데몬 안뜸 -cfx 128:128 (모노크롬 캡처)
+
+
+
+gstreamr
+
+
+
+리눅스 사진 흑백 변환
+
+# test.png -> test_gray.jpg, 흑백(grayscale) 변환, 화질 95, 밝기 조정
+convert -colorspace gray -gamma 2.2 test.png -quality 95 test_gray.jpg
+
+그 외에도 엄청나게 많은 기능 기능들은 man 을 참고해야 할 듯.
+man convert
+
+for 반복문과 조합하면 여러개의 이미지를 한꺼번에 변환할 수 있다. ~/pictures 디렉토리에 있는 모든 png 파일을 가로가 800 픽셀인 jpg 파일로 변환하는 경우를 생각해 보자. 아래와 같이 간단한 스크립트를 만들면 된다.
+
+# ~/pictures 디렉토리로 이동
+cd ~/pictures
+# for 반복문
+for file in `ls | grep "\.png$"`
+do
+  # 확장자(png)를 jpg로 바꾼 형태를 결과파일명 변수 result_file에 할당
+  result_file=`echo "$file" | sed 's/\.png$/\.jpg/'`
+  # 이미지 변환  (png -> jpg)
+  convert $file -quality 95 -resize 800 $result_file
+done
+
+
+참고 홈페이지
+https://openwiki.kr/tech/imagemagick

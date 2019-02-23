@@ -1,0 +1,126 @@
+MUSTACHE
+
+//https://mustache.github.io/mustache.5.html
+  mustache 레퍼런스
+
+{{변수이름}}
+
+{{! 내용 }} <- 주석
+예)
+
+get이나 post로 넘긴 객체이름으로
+
+<div>{{name}}</div>
+
+이런식으로 html파일에서 객체속성(변수값)을 읽어 볼수있다.
+
+{{$객체이름 }}
+	{{객체속성이름}}
+	{{객체속성이름2}}
+{{/객체이름}}
+
+위의 폼을 사용을 하여서 객체가 가지고있는 속성을 불러올수 있다.
+각 객체 속성이름은 배열로 User -> {name : aa, age : 30}. {name : bb, age : 40}
+이런식으로 넘어오면 자바의 for과 같이 전체를 루프돌려 출력해준다.
+
+{{#users}}
+  {{name}}
+{{/users}}
+{{^users}}
+ empty user
+{{/users}
+
+이런식으로 {{^ }}을 사용하여서 users객체에 아무 내용이 없을시
+empty user가 출력이 된다.
+
+{{{company}}}
+처럼 {를 3개씩 사용을 하면 STRING형식처럼 글이 읽어지는게 아닌
+HTML소스 처럼 읽어진다.
+
+
+Shown.
+{{#post}}
+Never shown!
+{{/person}}
+
+이렇게 사용할시 post로 넘어온 person객체의 속성이 없으면 나오지 않는다.
+
+
+{{#user}}
+  {{#doubled}}
+    {{name}}
+  {{/doubled}}
+{{/user}}
+
+이런형식으로 mustache코드를 사용할 경우
+@ControllerAdvice
+public class LayoutAdvice {
+    @ModelAttribute("doubled")
+    public Mustache.Lambda doubled() {
+        return (frag, out) -> {
+            String bodyString = frag.execute();
+            out.append(bodyString)
+               .append(bodyString);
+        };
+    }
+}
+
+이런식으로 자바코드를 사용하면
+user객체의 속성이름이 name이 Park일 경우
+ParkPark 이렇게 표현 된다.
+
+frag.execute() : 내부의 표현식을 실행한 후 String으로 반환한다.
+frag.context() : 상위 오브젝트(여기서는 User)를 가져온다.
+frag.context(int n) : n번째 상위 오브젝트를 가져온다.
+
+//이런기능을 받아올 수 있지만 HTML(VIew)에서 로직을 사용할 수 없다.
+
+자바코드에서
+model.addAttribute("user", new User("abc"));
+
+이렇게 보낼경우
+{{#user}}
+  Hello, {{name}}!
+{{/user}}
+
+이렇게 적으면
+
+Hello, Park! 이 출력이 된다.
+
+{{ }} (콧수염)모양을 변환하고 싶을시
+{{ name }}
+{{=<% %>=}} <!-- 변환 -->
+<% name %>
+이렇게 하면 콧수염을 <% %>로 바꾸어서 사용가능하다.
+
+
+----------------------------------------------------------
+application.properties에서 사용가능한 프로퍼티 레퍼런스
+뒤에 적힌 값은 default 값이다.
+# HttpServletRequest의 attribute를 Controller에서 생성한 동일한 이름의 model attribute로 덮어 쓸 수 있는지 여부
+spring.mustache.allow-request-override=false 
+
+# HttpSession의 attribute를 Controller에서 생성한 동일한 이름의 model attribute로 덮어 쓸 수 있는지 여부
+spring.mustache.allow-session-override=false 
+
+spring.mustache.cache=false 
+spring.mustache.charset=UTF-8
+spring.mustache.check-template-location=true
+spring.mustache.content-type=text/html
+spring.mustache.enabled=true
+
+# 모든 request attribute를 template에 병합하기 전 포함시켜야하는 지 여부
+spring.mustache.expose-request-attributes=false
+# 모든 session attribute를 template에 병합하기 전 포함시켜야하는 지 여부
+spring.mustache.expose-session-attributes=false
+# RequestContext를 노출할지 여부("springMacroRequsetContext"라는 이름의 spring macro library에 의해 설정됨)
+# <link rel="stylesheet" href="{{springMacroRequestContext.request.contextPath}}/assets/app.css">
+spring.mustache.expose-spring-macro-helpers=true
+
+spring.mustache.prefix=classpath:/templates/ 
+# 전체 view에서 사용할 RequestContext의 이름(키)
+spring.mustache.request-context-attribute=
+# viewname의 접미사
+spring.mustache.suffix=.mustache
+# 처리할 view name의 white list
+spring.mustache.view-names=
