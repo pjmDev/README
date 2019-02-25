@@ -40,3 +40,9 @@ Window -> Preferences -> General -> Web 의 CSS,HTML,JSP 3개지 설정의 Encoding을 
 
 Window -> Preferences -> General -> Web 의 CSS,HTML,JSP 3개지 설정의 Encoding을 UTF-8로 변경
 
+--------
+Alt + Shift + S, R     (생성자 만드는 단축키)
+ctl + Shift + O	(자동 Import)
+ctl + Shift + F	(자동 줄맞춤)
+
+
