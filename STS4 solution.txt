@@ -33,5 +33,10 @@ C:\workspace에 폴더를 만들고 여기로 지정을 하였다.
 
 이렇게하면 sts준비가 끝이난다.
 
+STS4 -> 인코딩 UTF-8로 변경 법
+Window -> Preferences -> General -> Workspace의 Text encoding을 UTF-8로 변경
 
+Window -> Preferences -> General -> Web 의 CSS,HTML,JSP 3개지 설정의 Encoding을 UTF-8로 변경
+
+Window -> Preferences -> General -> Web 의 CSS,HTML,JSP 3개지 설정의 Encoding을 UTF-8로 변경
 
