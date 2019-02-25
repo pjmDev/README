@@ -8,6 +8,9 @@ MUSTACHE
 {{! 내용 }} <- 주석
 예)
 
+{{> 지정자리}}
+include 방법
+
 get이나 post로 넘긴 객체이름으로
 
 <div>{{name}}</div>
