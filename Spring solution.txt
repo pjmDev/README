@@ -101,3 +101,43 @@ URI > GetMapping("url") ,  GetMapping("/url/{id}")
 자바코드에
 model.addAttribute("name","Park");
 속성이름 name으로 Park으로 지정해주고 html에서 받아서 사용 가능하다.
+
+
+----------------------------------------------------------------------------
+JPA 사용
+
+src/main/resources 폴더 안에 META-INF를 생성한 후에
+persistence.xml 파일을 만든다.
+
+xml파일에
+persistence 관련된 프로퍼티 를 복사해 붙이고 name을 만든다.
+(/src/main/resources/META-INF/persistence.xml)
+
+persistence.xml 파일 내용
+<?xml version="1.0" encoding="UTF-8"?>
+
+<persistence
+    xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence" version="2.2">
+ 
+    <persistence-unit name="ranayoDB"
+        transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" /> // mysql
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" /> // jdbc 사용
+            <property name="javax.persistence.jdbc.url" value="DB URL" />
+            <property name="javax.persistence.jdbc.user" value="DB ID" />
+            <property name="javax.persistence.jdbc.password" value="DB PASSWORD" />
+        
+        	<!-- 옵션 -->
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.use_sql_comments" value="true" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+            
+        </properties>
+    </persistence-unit>
+     
+</persistence>
