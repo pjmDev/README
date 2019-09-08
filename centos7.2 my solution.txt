@@ -121,7 +121,7 @@ tar실행 한후에 ./config문을 실행을 한 뒤에
 // yum install epel-release 를 설치를 한 후에
 // yum install libms... 과 yum install libmc...-devel 을 설치 할수있다.
 
-./config 컴파일이 다되면
+./config 컴파일이 다되면 (config 컴파일 내용은 제일 하단)
 
 #make 
 #make install
@@ -177,5 +177,49 @@ firewall -cmd --rerolad
 
  - 날자시간
   ln -sf /usr/share/zoneinfo/Aisa/Seoul /etc/localtime
+
+php config
+./configure --prefix=/usr/local/php-7.2.21 \
+--with-config-file-path=/usr/local/php-7.2.21/etc \
+--with-config-file-scan-dir=/usr/local/php-7.2.21/etc/conf.d \
+--with-libdir=lib64 \
+--enable-fpm \
+--with-fpm-systemd \
+--enable-sockets \
+--with-gettext \
+--with-mhash \
+--with-gmp \
+--with-gd \
+--with-jpeg-dir=/usr \
+--with-png-dir=/usr \
+--with-zlib-dir=/usr \
+--with-freetype-dir=/usr \
+--enable-bcmath \
+--enable-exif \
+--with-zlib \
+--with-bz2 \
+--enable-calendar \
+--enable-mbstring \
+--with-mhash \
+--enable-intl \
+--with-xsl \
+--with-sodium \
+--with-libxml-dir=/usr \
+--with-curl \
+--disable-debug \
+--with-openssl \
+--enable-mysqlnd \
+--with-pdo-mysql=mysqlnd \
+--with-mysqli=mysqlnd \
+--enable-inline-optimization \
+--enable-sysvmsg \
+--enable-sockets \
+--enable-sysvsem \
+--enable-sysvshm \
+--enable-pcntl \
+--enable-mbregex \
+--with-mhash \
+--enable-zip \
+--with-pcre-regex
 
 

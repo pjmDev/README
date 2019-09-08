@@ -109,3 +109,116 @@ sudo mkdir /home/디렉토리이름/git
 --------------------------
 고정IP -> AMI에서 받아서 사용가능
 
+-------------------------아마존 아파치 설치방법---------------------------
+아마존에 있는 방법이아닌 컴파일 방법으로 설치
+
+아파치 홈페이지에서
+httpd-2.4.37.tar.gz 를 다운받아 FTP이용하여 /usr/local/httpd 폴더에 설치
+
+설치를 할떄 apr이 필요하기 떄문에
+
+wget http://apache.tt.co.kr/apr/apr-1.6.5.tar.gz
+wget http://apache.tt.co.kr/apr/apr-util-1.6.1.tar.gz
+
+tar -zxvf apr-1.6.5.tar.gz
+tar -zxvf apr-util-1.6.1.tar.gz
+
+tar를 풀고
+
+mv apr-1.6.5 apr
+mv apr-util-1.6.1 apr-util
+//이름을 바꾼 후 srclib로 이동
+
+mv apr httpd-2.4.37/srclib/
+mv apr-util httpd-2.4.37/srclib/
+
+아파치를 설치하기에 apr도 필요하지만
+pcre를 설치해야함
+
+yum install -y gcc-c++    // g++ 설치
+yum install -y zlib-devel // zlib 설치
+// 컴파일을 위한 준비를 합니다 (위 2명령어)
+
+wget https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz
+tar -zxvf pcre-8.42.tar.gz
+//tar를 풉니다.
+
+폴더로 이동을 하여서
+cd pcre-8.42
+
+./configure
+make && make install
+
+xml/apr_xml.c:66: error: expected specifier-qualifier-list before ‘XML_Parser’
+xml/apr_xml.c:364: error: ‘apr_xml_parser’ has no member named ‘xp’
+라는 에러가 발생할 시
+
+yum install -y expat-devel 
+설치를 해줍니다.
+
+httpd 폴더로 이동을 하여서
+cd ../httpd-2.4.37
+
+./configure --prefix=/home1/apache --enable-module=so --enable-mods-shared=all --enable-so --enable-deflate --enable-rewrite --with-included-apr
+명령어를 사용  prefix = /usr/local/apache (apache 설치될 경로)
+
+configure 할 때 configure pcre-config 에러가 뜰시
+yum install pcre-devel
+를 설치하면 오류가 없어짐
+// 오류가 없을시 아래 명령어 실행
+make && make install
+
+설치가완료되면 
+/usr/local/apache/bin로 이동하여
+sudo ./apachectl start 를 하면
+ServerName’ directive globally to suppress this message라는 오류가 발생하는데
+
+/usr/local/apache/conf 에 httpd.conf 파일에 200번째줄 쯤에 있는 #www.example.com:80 의 #를 삭제
+
+iptables를 중단시키고
+[root@localhost conf]# service iptables stop
+[root@localhost conf]# /usr/local/apache/bin/apachectl start
+하면 실행 댐
+
+http://faq.hostway.co.kr/Linux_WEB/5716
+http://joont.tistory.com/46 
+(vhost설정은 위에 두 사이트를 참고하시면 됩니다.)
+
+이버전은 8080포트를 사용할 예정이니 인바운드 규칙 8080을 TCP연결을 열어줘야함(포트바인딩)
+
+httpd.conf 파일에
+AddType application/x-httpd-php .php .php3. php4. php5 .phtml .html .htm .inc 
+AddType application/x-httpd-php-source .phps 
+AddHandler application/x-httpd-php .phps
+등등 추가시킨후
+
+과 httpd-vhost.conf 파일 내용을(포트번호 등등) 수정을 하고나서 php파일을
+불러왔을 경우 php를 불러오지 못하는 경우가 있다. 이 경우에
+
+httpd.conf 파일에 php.conf 파일이 Include가 안되어 있어서
+/etc/httpd/conf.d 이 파일 경로에 php70-php.conf 나
+php.conf 파일 이름을 확인 한 후
+
+httpd.conf 파일 아랫부분 Include 가 모영있는 부분 아무대나
+Include /etc/httpd/conf.d/php.conf
+
+를 추가시켜주면 다운로드가 되지 않고 URL을 잘 읽어준다.
+
+-----------------------------------------------------------
+
+PHP 소스를 입력했을 경우에 코드가 컴파일이 안된다면
+
+즉 echo 같은 내용을 입력을 했는데 HTML코드 외에 아무 동작도 하지 않는다면
+
+apache폴더의 module에 libphp7.so 파일이 있는지 없는지 유무부터 파악을 한 후에
+
+파일이 없으면 다운받기 (전서버에 있거나 아님 다른 구글링해서 받아라)
+
+그런다음에 httpd.conf 에 내용에 
+LoadModule php7_module modules/libphp7.so
+라는 내용이 있는지 없는지 확인을 하고 없으면 LoadModule 부분에 추가를 시켜준다.
+
+그러고 ./apachectl restart를 하면 php 코드가 실행이되며 화면에 뜬다.
+
+----------> apache2.4 와 php7.2.19를 아마존 AMI2 에서 사용하는 방법이다.
+
